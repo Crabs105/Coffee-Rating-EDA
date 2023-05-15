@@ -1,0 +1,210 @@
+---
+title: "Coffee Rating "
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+
+This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+
+## Including Code
+
+You can include R code in the document as follows:
+
+```{r}
+tt_load("2020-07-07")
+
+CoffeBean <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-07-07/coffee_ratings.csv')
+
+view(CoffeBean)
+colnames(CoffeBean)
+```
+
+```{r}
+## Block code 2 
+## Let create a dataset on which we can sum all coffee attributes and compare this sum ## to the total cup point. 
+  
+Attributes<-CoffeBean %>% 
+  mutate(
+    grand_total_check = select(
+      ., aroma:cupper_points
+    ) %>% rowSums(na.rm = T)
+  ) 
+view(Attributes)
+```
+
+
+```{r}
+## Block code 3 Beginning of Data Manipulation 
+
+## We start Exploratory Data Analysis with generate a dataset with only the 
+## attributes
+
+OnlyAttributes<- Attributes %>% 
+  select(aroma:cupper_points)
+
+View(OnlyAttributes)
+```
+
+
+```{r}
+## check for any missing value
+
+is.na(OnlyAttributes$aroma)
+is.na(OnlyAttributes$flavor)
+is.na(OnlyAttributes$aftertaste)
+is.na(OnlyAttributes$acidity)
+is.na(OnlyAttributes$body)
+is.na(OnlyAttributes$balance)
+is.na(OnlyAttributes$uniformity)
+is.na(OnlyAttributes$clean_cup)
+is.na(OnlyAttributes$sweetness)
+is.na(OnlyAttributes$cupper_points)
+```
+
+```{r}
+## Block code 4
+## Ranking per Attributes
+## Determine the list countries with more the 10 samples
+
+WithAtList10Samples<- CoffeBean %>% 
+  group_by(country_of_origin) %>% 
+  count() %>% 
+  filter(n>10)
+
+view(WithAtList10Samples)
+```
+```{r}
+CoffeBeanWith10Countries<-CoffeBean %>% 
+  filter(country_of_origin %in% c("Brazil","China","Colombia","Costa Rica","El Salvador","Ethiopia","Guatemala","Honduras","India","Indonesia","Kenya","Malawi","Mexico","Nicaragua","Taiwan","Thailand","Tanzania, United Republic Of","Uganda","United States(Hawaii)"))
+view(CoffeBeanWith10Countries)
+```
+
+```{r}
+MedianAroma <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankAroma=median(aroma))
+view(MedianAroma)
+```
+
+```{r}
+MedianFlavor <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankFlavor=median(flavor))
+view(MedianFlavor)
+```
+
+
+```{r}
+MedianAFterTaste <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankAftertaste=median(aftertaste))
+view(MedianAFterTaste)
+max(MedianAFterTaste$RankAftertaste)
+```
+
+```{r}
+## Acidity 
+MedianAcidity <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankAcidity=median(acidity))
+view(MedianAcidity)
+```
+```{r}
+## Body
+
+MedianBody <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankBody=median(body))
+view(MedianBody)
+```
+```{r}
+## Balance
+
+MedianBalance <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankBalance=median(balance))
+view(MedianBalance)
+```
+
+```{r}
+## Uniformity
+
+MedianUniformity  <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankAftertaste=median(uniformity))
+view(MedianUniformity)
+```
+
+```{r}
+## Clean Cup
+
+MedianClean_cup <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankClean_cup=median(clean_cup))
+view(MedianClean_cup)
+```
+
+```{r}
+## Sweetness
+MedianSweetness <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankSweetness=median(sweetness))
+view(MedianSweetness)
+```
+
+```{r}
+## Cupper Points
+
+MedianCupperPoint <- CoffeBeanWith10Countries %>% 
+  group_by(country_of_origin) %>% 
+  summarise(RankCupperpoints=median(cupper_points))
+view(MedianCupperPoint)
+```
+
+
+```{r}
+
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+ggplot(CoffeBean , aes(x=country_of_origin))+
+  geom_bar()
+```
+
+
+```{r}
+
+radarchart(BrazilData,
+           seg=10,
+           title= "Brazil Radar Plot",
+           pfcol=scales::alpha("gray",0.3),
+           plwd = 2)
+```
+
+
+
+```{r}
+radarchart(EthiopiaData,
+           seg=10,
+           title= "Ethiopia Radar Plot",
+           pfcol=scales::alpha("gray",0.3),
+           plwd = 2)
+```
+
+```{r}
+ggplot(MedianCupperPointPerYear2, aes(x=harvest_year,y=RankCupperpoints))+
+  geom_col()+
+  coord_cartesian(ylim=c(70,90))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
